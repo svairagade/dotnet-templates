@@ -8,9 +8,7 @@
 
     <ItemGroup>
         <Compile Include="Infrastructure.fs" />
-        <Compile Include="LocationSeries.fs" />
         <Compile Include="LocationEpoch.fs" />
-        <Compile Include="Location.fs" />
         <Compile Include="InventorySeries.fs" />
         <Compile Include="InventoryEpoch.fs" />
         <Compile Include="InventoryTransaction.fs" />

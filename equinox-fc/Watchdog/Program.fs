@@ -353,15 +353,8 @@ let build (args : CmdParser.Arguments) =
             Fc.Inventory.Cosmos.create inventoryId maxTransactionsPerEpoch lookBackLimit (context, cache)
         let transactionService = Fc.Inventory.Transaction.Cosmos.createService (context, cache)
         let locations =
-            let zeroBalance : Fc.Location.Epoch.Events.CarriedForward = { initial = 0; recentTransactions = [||] }
-            let chooseTransactionIds = function
-                | Fc.Location.Epoch.Fold.Init { recentTransactions = ids } -> Seq.ofArray ids
-                | Fc.Location.Epoch.Fold.Step { id = id } -> Seq.singleton id
-            let toBalanceCarriedForward (Fc.Location.Epoch.Fold.Current cur as records) : Fc.Location.Epoch.Events.CarriedForward =
-                { initial = cur; recentTransactions = records |> Seq.collect chooseTransactionIds |> Seq.truncate 5 |> Seq.toArray }
-            let shouldClose x = false
             let maxAttempts = 3
-            Fc.Location.Cosmos.createService (zeroBalance, toBalanceCarriedForward, shouldClose) (context, cache, maxAttempts)
+            Fc.Location.Epoch.Cosmos.createService (context, cache, maxAttempts)
         let processor = Fc.Inventory.Processor.Service(transactionService, locations, inventoryService)
 
         let handle = Handler.handleStreamEvents (Handler.tryHandle processor.Push)
